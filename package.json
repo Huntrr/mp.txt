@@ -14,7 +14,7 @@
     "rogue-like"
   ],
   "version": "0.0.1",
-  "versionName": "Messy Moose",
+  "versionName": "Messy Mouse",
   "private": true,
   "engines": { "node": "0.10.35" },
   "scripts": { "start": "node app.js" },

@@ -5,8 +5,23 @@ block header
 
 block content
   #status
+    #leftStatus
+      | [<span style='color: red'>=========</span><span style='color: black'>--------</span>] (60/100)
+      | <br>
+      | [<span style='color: blue'>=================</span>] (100/100)
+    #middleStatus
+      h1 #{appname}
+      h2 v#{version} - #{versionName}
+    #rightStatus
+      p Location: Somewhere
   #box
     #left
     #world
     #right
   #console
+    ul#messages
+      li [<span style='color: orange'>o</span>] Hunter: Hey!
+      li [<span style='color: pink'>o</span>] Jacob: Sup?
+    form(action='')
+      input#field(autocomplete='off')
+      button#send Send
