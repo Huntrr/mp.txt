@@ -1,12 +1,31 @@
 {
   "name": "mp.txt",
+  "author": "Hunter Lightman <me@hunterlightman.com>",
+  "description": "Backbone for multiplayer text-based 'graphical' dungeon crawler rogue-like. Or something like that.",
+  "contributors": [
+    { "name": "Hunter Lightman", "email": "me@hunterlightman.com" }
+  ],
+  "repository": { "type": "git", "url": "https://github.com/Huntrr/mp.txt.git" },
+  "bugs": { "url": "https://github.com/Huntrr/mp.txt/issues" },
+  "keywords": [
+    "game",
+    "multiplayer",
+    "text-based",
+    "rogue-like"
+  ],
   "version": "0.0.1",
+  "versionName": "Messy Moose",
   "private": true,
-  "scripts": {
-    "start": "node app.js"
-  },
+  "engines": { "node": "0.10.35" },
+  "scripts": { "start": "node app.js" },
+  "license": "MIT",
   "dependencies": {
-    "express": "3.2.6",
-    "jade": "*"
+    "express": "4.11.0",
+    "jade": "*",
+    "stylus": "*",
+    "mongoose": "3.8.21",
+    "body-parser": "1.10.1",
+    "serve-favicon": "2.2.0",
+    "errorhandler": "1.3.2"
   }
 }

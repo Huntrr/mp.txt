@@ -1,8 +1,46 @@
 body {
+  margin: 0;
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #000;
+  font-family: Consolas, monospace;
 }
-
-a {
-  color: #00B7FF;
+#status {
+  padding: 0;
+  margin: auto;
+  width: 600px;
+  min-width: 600px;
+  background-color: #fff;
+  height: 60px;
+}
+#box {
+  padding: 0;
+  margin: auto;
+  width: 600px;
+  min-width: 600px;
+  height: 480px;
+}
+#left {
+  width: 60px;
+  float: left;
+  background-color: #f00;
+  height: 100%;
+}
+#right {
+  width: 60px;
+  float: left;
+  background-color: #f00;
+  height: 100%;
+}
+#world {
+  width: 480px;
+  float: left;
+  background-color: #00f;
+  height: 100%;
+}
+#console {
+  margin: auto;
+  width: 600px;
+  min-width: 600px;
+  background-color: #fff;
+  height: 150px;
 }
