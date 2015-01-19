@@ -9,7 +9,7 @@ var cluster = require('cluster'),
     net = require('net'); //needs for main master server, which delegates to workers
 
 
-var port = process.env.PORT || 80;
+var port = process.env.PORT || 3000;
 
 if(cluster.isMaster) {
   //first launch
@@ -106,14 +106,20 @@ if(cluster.isMaster) {
       sio_redis = require('socket.io-redis'),
       pjson = require('./package.json');
   
+  var jwt = require('jsonwebtoken');
+  var socketio_jwt = require('socketio-jwt');
+  var jwt_secret = require('./config/jwt-secret').secret; //The super secret string that must not be shared with anyone
+  
   //config grabbers
   var configDB = require('./config/database.js');
   
   //setup the app
   var app = new express();
   
-  //main configuration
+  //main MongoDB configuration
   mongoose.connect(configDB.url);
+  var db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'connection error:'));
   
   //==========================
   //     CONFIGURE EXPRESS
@@ -143,7 +149,7 @@ if(cluster.isMaster) {
     //============================
     //           ROUTES
     //============================
-    require('./routes/game')(app);
+    require('./routes/game')(app, jwt, jwt_secret);
     
     app.use(express.static(__dirname + '/public')); //for serving static resources
     
@@ -195,6 +201,13 @@ if(cluster.isMaster) {
   //=========================
   //SOCKET.IO MIDDLEWARE HERE
   //=========================
+  
+  //socket.io handlers
+  db.once('open', function (cb) {    
+    var world = require('./app/world')(io.of('/txt-world'),
+                socketio_jwt.authorize({secret: jwt_secret, handshake: true}),
+                db, jwt, jwt_secret);
+  });
   
   //listen to messages sent from the master. Ignore everything else.
   process.on('message', function(message, connection) {

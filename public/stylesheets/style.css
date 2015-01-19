@@ -116,6 +116,7 @@ h2 {
   margin: 0;
   padding: 0;
   height: 125px;
+  overflow-y: scroll;
 }
 #messages li {
   padding: 0 2px;

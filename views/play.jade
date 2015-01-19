@@ -3,6 +3,7 @@ extends layouts/main
 block header
   script(src='/socket.io/socket.io.js')
   script(src='/js/gameformat.js')
+  script(src='/js/gameclient.js')
 
 block content
   #status
@@ -21,8 +22,6 @@ block content
     #right
   #console
     ul#messages
-      li [<span style='color: orange'>o</span>] Hunter: Hey!
-      li [<span style='color: pink'>o</span>] Jacob: Sup?
-    form(action='')
+    form(action='')#consoleform
       input#field(autocomplete='off')
-      button#send Send
+      input(type='submit' value='Send')#send
