@@ -5,6 +5,6 @@
 
 module.exports = function(app, passport) {
   app.get('/', function(req, res) {
-    res.render('play', { title: 'mp.txt' });
+    res.render('play', { title: 'mp.txt' , IO_SERVER: 'http://localhost' });
   })
 }
