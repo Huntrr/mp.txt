@@ -4,7 +4,8 @@ var Entity = require('./schema/entity');
 var Object = require('./schema/object');
 var Config = require('./schema/config');
 var User = require('./schema/user');
-
+var RoomInstance = require('./room');
+var Validator = require('validator');
 
 module.exports = function(io, toUse, db, jwt, jwt_secret) {
   io.use(toUse);
@@ -49,17 +50,29 @@ module.exports = function(io, toUse, db, jwt, jwt_secret) {
       }
     });
     
+    //connect user to room (and just hope to god the default room exists before we find the user)
+    socket.join(socket.decoded_token.email); //joins a room associated with that user's email address, for messaging purposes
+    var roomInstance = new RoomInstance(socket, io);
+    
     //rest of onConnection stuff
     console.log(socket.decoded_token.email, 'connected.');
     socket.on('ping', function (m) {
       socket.emit('pong', m);
     });
     
-    socket.on('command', function command(cmd) {
-      console.log(socket.decoded_token.email, 'used command', cmd.type, cmd.args)
-      require('./command')(cmd, socket, jwt, jwt_secret, io);
+    //handles commands
+    socket.on('chat.command', function command(cmd) {
+      console.log(socket.decoded_token.email, 'USED COMMAND', cmd.type, cmd.args);
+      require('./command')(cmd, socket, jwt, jwt_secret, io, roomInstance);
     });
     
+    socket.on('chat.message', function message(msg) {
+      var cleanMessage = Validator.trim(Validator.stripLow(Validator.escape(msg.message)));
+      console.log(socket.decoded_token.email, 'MESSAGED', cleanMessage);
+      roomInstance.broadcast(socket.decoded_token, cleanMessage);
+    });
+    
+    //"clean" disconnect (a little bit dirty right now)
     socket.on('disconnect', function (socket) {
       console.log('Someone is disconnecting');
       if(socket.decoded_token) {
@@ -80,3 +93,15 @@ module.exports = function(io, toUse, db, jwt, jwt_secret) {
   
   
 };
+
+
+//function for getting the user out of a token
+function getUser(token, cb) {
+  User.findOne({ _id: token._id })
+      .populate('entity')
+      .exec(function(err, user) {
+        if(err) { return cb(err); }
+        user.touch();
+        cb(err, user);
+      });
+}

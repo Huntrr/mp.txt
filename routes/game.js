@@ -21,7 +21,7 @@ module.exports = function(app, jwt, jwt_secret) {
       if(err) {
         return console.log(err.message);
       }
-      
+      user.createEntity('o', '#0FFF0F');
       var token = jwt.sign(user.token, jwt_secret, { expiresInMinutes: 60*5 });
       
       res.send(token)

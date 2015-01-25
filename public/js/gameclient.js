@@ -1,19 +1,30 @@
-var gameSocket;
-var token;
+var socket;
+var token
+var commandHistory = [];
+var historyIndex = 0;
+
+var $input;
 
 function connect() {
   var url = "http://localhost:3000";
+  if(socket) {
+    socket.removeAllListeners();
+  }
+  
   if(token) {
-    gameSocket = io(url + '/txt-world', {'forceNew': true, 'query': 'token=' + token});
+    socket = io(url + '/txt-world', {'forceNew': true, 'query': 'token=' + token});
   } else {
-    gameSocket = io(url + '/txt-world', {'forceNew': true});
+    socket = io(url + '/txt-world', {'forceNew': true});
   }
   
   loadGame();
 }
 
-
 $(document).ready(function () { 
+  //set up doc objects
+  $input = $('#field');
+  
+  //get temp token
   $.get("/temp", function(string) {
     token = string;
     connect();
@@ -31,57 +42,77 @@ function loadGame() {
   
   
   var send = function(message) {
-    //is a command
-    if(message.substring(0, 1) === '/') {
-      message = message.substring(1);
-      var arr = message.split(' ');
-      var type = arr.shift();
-      
-      gameSocket.emit('command', {type: type, args: arr});
-      
-      //special case for logout command
-      if(type === 'logout') {
-        token = false;
-        location.reload(true);
+    if(message.length > 0) {
+      //is a command
+      if(message.substring(0, 1) === '/') {
+        message = message.substring(1);
+        var arr = message.split(' ');
+        var type = arr.shift();
+
+        socket.emit('chat.command', {type: type, args: arr});
+
+        //special case for logout command
+        if(type === 'logout') {
+          token = false;
+          location.reload(true);
+        }
+      } else {
+        //is regular speech
+        socket.emit('chat.message', {message: message});
       }
     }
-    
-    //is regular speech
   }
-  
+
   //loads the world
-  gameSocket.on('world.load', function (data) {
+  socket.on('world.load', function (data) {
     $('#world').html(data.json);
     socket.emit('world.load', { type: 'ack' });
   });
   
-  gameSocket.on('login.failure', function (data) {
+  socket.on('login.failure', function (data) {
     post('<span style="color: red">ERROR: ' + data.message + '</span>');
   });
   
-  gameSocket.on('login.success', function(data) {
+  socket.on('login.success', function(data) {
     token = data.token;
     connect();
   });
   
   //posts a general chat message to the console
-  gameSocket.on('chat.post', function(data) {
+  socket.on('chat.post', function(data) {
     post(data.message);
   });
-  gameSocket.on('chat.error', function(data) {
+  socket.on('chat.error', function(data) {
     post("<span style='color: #FF0000'>" + data.message + "</span>");
   });
-  gameSocket.on('chat.success', function (data) {
+  socket.on('chat.success', function (data) {
     post("<span style='color: #00FF00'>" + data.message + "</span>");
   });
   
   $('#consoleform').submit(function (e) {
     e.preventDefault();
-    send($('#field').val());
-    $('#field').val('');
+    commandHistory.push($input.val());
+    historyIndex = 1;
+    send($input.val());
+    $input.val('');
+  });
+  $input.keydown(function (e) {
+    if(e.which === 38) {
+      //up key
+      $input.val(commandHistory[commandHistory.length - historyIndex]);
+      
+      historyIndex++;
+      if(historyIndex > commandHistory.length) { historyIndex = commandHistory.length; }
+    } else if(e.which === 40) {
+      //down key
+      $input.val(commandHistory[commandHistory.length - historyIndex]);
+      
+      historyIndex--;
+      if(historyIndex < 1) { historyIndex = 1; }
+    }
   });
   
-  gameSocket.on("error", function(error) {
+  socket.on("error", function(error) {
     if (error.type == "UnauthorizedError" || error.code == "invalid_token") {
       // redirect user to login page perhaps?
       post('<span style="color: #FF0000">ERROR: Can\'t validate session... Try refreshing?</span>');

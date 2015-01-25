@@ -79,6 +79,7 @@ h2 {
   border: solid;
   border-width: 1px;
   border-color: #808080;
+  overflow: hidden;
 }
 #console {
   margin: auto;

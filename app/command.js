@@ -1,7 +1,7 @@
 var User = require('./schema/user');
 var Validator = require('validator');
 
-module.exports = function(cmd, socket, jwt, jwt_secret, io) {
+module.exports = function(cmd, socket, jwt, jwt_secret, io, room) {
   cmd.type = Validator.escape(cmd.type);
   if(cmd.type === 'login') {
     if(socket.decoded_token.email !== "temp") {
@@ -132,26 +132,43 @@ module.exports = function(cmd, socket, jwt, jwt_secret, io) {
             });
           }
           
-          //user successfully created, now to log in
-          var token = jwt.sign(user.token, jwt_secret, { expiresInMinutes: 60*5 });
-          socket.emit('login.success', {token: token});
+          user.createEntity('o', '#00FFFF', function() {
+            //user successfully created, now to log in
+            var token = jwt.sign(user.token, jwt_secret, { expiresInMinutes: 60*5 });
+            socket.emit('login.success', {token: token});
+          });
+          
+          
         });
       }
     });
     return;
   }
   
-  if(cmd.type === 'announce' && socket.decoded_token.admin) { //admin only command
-    //announces a message to the whole server
-    if(cmd.args.length > 0) { 
-      var msg = cmd.args.join(' ');
-      console.log('Announcing', msg);
-      io.emit('chat.post', {message: '[ANNOUNCEMENT] <span style="color: #FF0000">' + socket.decoded_token.name + "</span>: " + msg});
-    } else {
-      socket.emit('chat.error', {message: 'Add a message please...'});
+  //---------------------------
+  //       ADMIN COMMANDS
+  //---------------------------
+  if(socket.decoded_token.admin) {
+    
+    if(cmd.type === 'cleartemp') {
+      User.remove({email: 'temp'}).exec();
+      socket.emit('chat.success', {message: 'Cleared all temporary users'});
+      
+      return;
     }
     
-    return;
+    if(cmd.type === 'announce') { //admin only command
+      //announces a message to the whole server
+      if(cmd.args.length > 0) { 
+        var msg = cmd.args.join(' ');
+        console.log('Announcing', msg);
+        io.emit('chat.post', {message: '[ANNOUNCEMENT] <span style="color: #FF0000">' + socket.decoded_token.name + "</span>: " + msg});
+      } else {
+        socket.emit('chat.error', {message: 'Add a message please...'});
+      }
+
+      return;
+    }
   }
   
   socket.emit('chat.error', {message: 'That\'s not a command!'});
