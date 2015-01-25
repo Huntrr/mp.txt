@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var User = require('./user');
 
 var entitySchema = new Schema({
   room: { type: Schema.Types.ObjectId, ref: 'Room' },
@@ -10,6 +11,16 @@ var entitySchema = new Schema({
   behavior: String,
   description: String,
   belongsTo: { type: Schema.Types.ObjectId, ref: 'User' }
+});
+
+entitySchema.pre('save', function(next) {
+  var now = new Date();
+  if(this.belongsTo) {
+    this.model('User').update({_id: this.belongsTo}, {lastMessage: now}, function(err, user) {
+      if(err) console.log("While saving entity", err.message);
+    });
+  }
+  next();
 });
 
 entitySchema.static('getColor', function(playerId, callback) {

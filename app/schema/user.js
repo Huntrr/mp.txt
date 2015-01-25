@@ -78,8 +78,16 @@ userSchema.virtual('token').get(function () {
 userSchema.virtual('loggedIn').get(function() {
   var now = new Date();
   var age = now.getTime() - this.lastMessage.getTime();
-  var minutes = Math.round(age/(1000*60));
-  return minutes < 10;
+  var seconds = Math.round(age/(1000));
+  var loggedIn = seconds < 45; //seconds until timeout
+  
+  
+  if(this.email === "temp" && !loggedIn) {
+    //delete temp accounts that timeout
+    this.remove().exec();
+  }
+  
+  return loggedIn;
 });
 
 //create the model for users and expose it to our app

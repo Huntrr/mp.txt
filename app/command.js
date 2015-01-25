@@ -55,7 +55,11 @@ module.exports = function(cmd, socket, jwt, jwt_secret, io, room) {
   
   if(cmd.type === 'logout') {
     //... well this just means the player has disconnected...
-    //... nothing to see here.
+    //logout the user
+    User.findById(socket.decoded_token._id).exec(function(err, user) {
+      if(err) return console.log(err.message);
+      user.forceLogout();
+    });
     return;
   }
   

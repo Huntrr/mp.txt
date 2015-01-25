@@ -78,6 +78,11 @@ function loadGame() {
     connect();
   });
   
+  socket.on('heartbeat', function(data) {
+    var now = new Date();
+    socket.emit('heartbeat', { type: 'ack', time: now });
+  });
+  
   //posts a general chat message to the console
   socket.on('chat.post', function(data) {
     post(data.message);

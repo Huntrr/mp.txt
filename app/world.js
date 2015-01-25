@@ -59,6 +59,11 @@ module.exports = function(io, toUse, db, jwt, jwt_secret) {
     socket.on('ping', function (m) {
       socket.emit('pong', m);
     });
+    socket.on('heartbeat', function(data) {
+      getUser(socket.decoded_token, function(err, user) {
+        //get user will automatically touch the user
+      });
+    });
     
     //handles commands
     socket.on('chat.command', function command(cmd) {
@@ -87,8 +92,9 @@ module.exports = function(io, toUse, db, jwt, jwt_secret) {
     });
     
     setInterval(function () {
-      socket.emit('time', Date());
-    }, 5000);
+      var now = new Date();
+      socket.emit('heartbeat', {time: now});
+    }, 15000);
   });
   
   
@@ -97,7 +103,7 @@ module.exports = function(io, toUse, db, jwt, jwt_secret) {
 
 //function for getting the user out of a token
 function getUser(token, cb) {
-  User.findOne({ _id: token._id })
+  User.findById(token._id)
       .populate('entity')
       .exec(function(err, user) {
         if(err) { return cb(err); }

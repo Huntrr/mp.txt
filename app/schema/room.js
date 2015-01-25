@@ -46,23 +46,30 @@ roomSchema.methods.getJSON = function (cb) {
     json.desc = room.inside.description;
     json.tiles = room.inside.tiles;
     json.roof = room.inside.roof;
-    json.objects = room.inside.objects;
+    
+    json.objects = {};
+    var objLength = room.inside.objects.length;
+    var obj;
+    for(var j = 0; j < objLength; j++) {
+      obj = room.inside.objects[j];
+      json.objects[obj.id] = obj;
+    }
     
     $this.getEntities(function (err, entities) {
       if(err) { return cb(err, null); }
-      json.entities = [];
+      json.entities = {};
       var length = entities.length;
       var entity;
       
       for(var i = 0; i < length; i++) {
         entity = entities[i];
         
-        if(entity.belongsTo) {
-          if(entity.belongsTo.loggedIn) {
-            json.entities.push(entity);
+        if(entity.behavior === "player") {
+          if(entity.belongsTo && entity.belongsTo.loggedIn) {
+            json.entities[entity.id] = entity;
           }
         } else {
-          json.entities.push(entity);
+          json.entities[entity.id] = entity;
         }
       }
       

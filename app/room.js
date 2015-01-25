@@ -95,7 +95,7 @@ module.exports = RoomInstance;
 //STATIC FUNCTIONS
 //function for getting the user out of a token
 function getUser(token, cb) {
-  User.findOne({ _id: token._id })
+  User.findById(token._id)
       .populate('entity')
       .exec(function(err, user) {
         if(err) { return cb(err); }
