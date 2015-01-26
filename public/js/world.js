@@ -8,7 +8,7 @@ var World = function(Socket, Console) {
   
   
   //SETUP LISTENERS
-  gameSocket.on('world.load', function (data) {
+  socket.on('world.load', function (data) {
     $('#world').html(data.json);
     gameSocket.emit('world.load', { type: 'ack' });
   });
