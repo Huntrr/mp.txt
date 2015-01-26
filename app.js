@@ -6,8 +6,16 @@
 
 //setup cluster (for multi-cpu usage)
 var cluster = require('cluster'),
+    mongoose = require('mongoose'), //for mongodb
     net = require('net'); //needs for main master server, which delegates to workers
 
+//config grabbers
+  var configDB = require('./config/database.js');
+
+//main MongoDB configuration
+  mongoose.connect(configDB.url);
+  var db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'connection error:'));
 
 var port = process.env.PORT || 3000;
 
@@ -93,12 +101,42 @@ if(cluster.isMaster) {
     worker.send({ act: 'sticky.connect', seq: seq }, connection);
     seq++;
   }).listen(port);
+  
+  
+  //see if we need to spawn the default room/world
+  var World = require('./app/schema/world');
+  
+  db.once('open', function (cb) {    
+    console.log('Seeing if we need a default room');
+    World.count({}, function(err, count) {
+      if(err) { return console.log(err) };
+      console.log('Current room count:', count);
+      if(count === 0) {
+        //spawn new world
+        var world = new World({rooms: [],
+                                name: "default",
+                                description: "It's... Well it's a world." });
+        world.save(function (err, newWorld) {
+          if(err) { return console.log(err.message); }
+          console.log('Created new world with id', newWorld.id);
+
+          //add default room
+          var newGenerator = require('./app/generators/basic/plains')(100, 50);
+          newWorld.generateRoom(newGenerator, 0, 0, "default", 
+            function(err, room) {
+              if(err) { return console.log(err.message); }
+              console.log("New room created with id" + room.id);
+            });
+        });
+      }
+    });
+  });
+  
 } else {
   //THIS is the "main" program that'll run on each fork of the cluster
   
   //module dependencies
   var express = require('express'),
-      mongoose = require('mongoose'), //for mongodb
       bodyParser = require('body-parser'),
       favicon = require('serve-favicon'),
       errorHandler = require('errorhandler'),
@@ -110,16 +148,8 @@ if(cluster.isMaster) {
   var socketio_jwt = require('socketio-jwt');
   var jwt_secret = require('./config/jwt-secret').secret; //The super secret string that must not be shared with anyone
   
-  //config grabbers
-  var configDB = require('./config/database.js');
-  
   //setup the app
   var app = new express();
-  
-  //main MongoDB configuration
-  mongoose.connect(configDB.url);
-  var db = mongoose.connection;
-  db.on('error', console.error.bind(console, 'connection error:'));
   
   //==========================
   //     CONFIGURE EXPRESS
@@ -159,11 +189,7 @@ if(cluster.isMaster) {
     app.use(function(req, res, next) {
       res.status(404);
       if (req.accepts("html")) {
-        if(!req.user) {
-          res.render("404.jade", { curUser: {user: null, loggedIn: false} });
-        } else {
-          res.render("404.jade", { curUser: {user: req.user, loggedIn: true} });
-        }
+        res.render("404.jade");
         
         return;
       }

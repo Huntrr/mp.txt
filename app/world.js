@@ -28,28 +28,6 @@ module.exports = function(io, toUse, db, jwt, jwt_secret) {
       }
     });
     
-    //see if we need to spawn the default room/world
-    World.count({}, function(err, count) {
-      if(err) { return console.log(err) };
-      
-      if(count === 0) {
-        //spawn new world
-        var world = new World({rooms: [],
-                                name: "default",
-                                description: "It's... Well it's a world." });
-        world.save(function (err, newWorld) {
-          if(err) { return console.log(err.message); }
-          
-          //add default room
-          newWorld.newRoom(require('./../config/defaultRoom'), function(err, room) {
-            if(err) { return console.log(err.message); }
-            
-            console.log("New room created with id " + room.id);
-          })
-        });
-      }
-    });
-    
     //connect user to room (and just hope to god the default room exists before we find the user)
     socket.join(socket.decoded_token.email); //joins a room associated with that user's email address, for messaging purposes
     var roomInstance = new RoomInstance(socket, io);

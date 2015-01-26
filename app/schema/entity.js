@@ -6,6 +6,7 @@ var entitySchema = new Schema({
   room: { type: Schema.Types.ObjectId, ref: 'Room' },
   x: { type: Number, default: -1 },
   y: { type: Number, default: -1 },
+  body: Schema.Types.Mixed,
   character: String,
   color: String,
   behavior: String,
@@ -14,6 +15,8 @@ var entitySchema = new Schema({
 });
 
 entitySchema.pre('save', function(next) {
+  this.markModified('body');
+  
   var now = new Date();
   if(this.belongsTo) {
     this.model('User').update({_id: this.belongsTo}, {lastMessage: now}, function(err, user) {

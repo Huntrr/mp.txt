@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Object = require('./object');
+var Entity = require('./entity');
 var Schema = mongoose.Schema;
 
 var roomSchema = new Schema({
@@ -23,6 +24,48 @@ roomSchema.pre('remove', function(next) {
   
   next();
 });
+
+roomSchema.pre('save', function(next) {
+  this.markModified('inside.tiles');
+  this.markModified('inside.roof');
+  
+  next();
+});
+
+
+roomSchema.methods.generateRoom = function (Generator, cb) {
+  var map = Generator.generate(/* in case we ever have parameters here */);
+  
+  this.inside.description = map.desc;
+  this.inside.tiles = map.tiles;
+  this.inside.roof = map.roof;
+  
+  var $this = this;
+  var i;
+  var length = map.entities.length;
+  var newEntity;
+  
+  for(i = 0; i < length; i++) {
+    newEntity = new Entity(map.entities[i]);
+    newEntity.room = this._id;
+    newEntity.save();
+  }
+  
+  length = map.objects.length;
+  var newObject;
+  
+  for(i = 0; i < length; i++) {
+    newObject = new Object(map.objects[i]);
+    newObject.room = this._id;
+    newObject.save(function(err, obj) {
+      if(err) return console.log(err.message);
+      $this.inside.objects.push(obj._id);
+      $this.save();
+    });
+  }
+  
+  this.save(cb);
+}
 
 //returns an array of all entities in this room
 //attach callback in form of < function cb(err, entities) >

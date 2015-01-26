@@ -25,4 +25,21 @@ worldSchema.methods.newRoom = function(room, cb) {
   });
 };
 
+worldSchema.methods.generateRoom = function(generator, x, y, tag, cb) {
+  var world = this;
+  var newRoom = new Room();
+  newRoom.x = x;
+  newRoom.y = y;
+  newRoom.tag = tag;
+  
+  newRoom.generateRoom(generator, function(err, room) {
+    if(err) return cb(err, null);
+    world.rooms.push(room._id);
+    world.save(function(err, world) {
+      if(err) return cb(err, null);
+      cb(err, room);
+    });
+  });
+}
+
 module.exports = mongoose.model('World', worldSchema);
