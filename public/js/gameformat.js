@@ -1,4 +1,11 @@
-//formats the game window nicely
+//formats the game window "nicely"
+//                          ^
+//ohhhh, burn ______________|    
+
+/**
+ *This file is never run or used
+ */
+
 $(document).ready(function () {
   var MARGIN = 50;
   var STATUS_BAR = 60;

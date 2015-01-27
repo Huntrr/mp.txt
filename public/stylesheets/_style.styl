@@ -1,0 +1,141 @@
+//vars
+borderColor = #808080
+sidebarColor = #101010
+barColor = #080808
+
+
+//style
+body
+  margin: 0
+  padding: 50px
+  background-color: #202020
+  font-family: menlo, monospace
+  color: white
+
+h1
+  font-size: 20px
+  padding: 0
+  margin: 5px
+h2
+  font-size: 14px
+  padding: 0
+  margin: 0
+
+#status
+  text-align: center
+  padding: 0
+  margin: auto
+  width: 100%
+  min-width: 100%
+  background-color: barColor
+  height: 10%
+  
+  border-top: solid
+  border-left: solid
+  border-right: solid
+  border-width: 1px
+  border-color: borderColor
+  overflow: hidden
+
+#leftStatus
+  text-align: left
+  padding: 7px
+  float: left
+  height: 15%
+  width: 30%
+  white-space: nowrap
+  //background-color: black
+  position: absolute
+  //z-index: 1
+
+#rightStatus
+  text-align: right
+  padding: 7px
+  float: right
+  height: 10%
+  width: 20%
+  white-space: nowrap
+  //background-color: black
+  position: absolute
+  //z-index: 1
+
+#middleStatus
+  text-align: center
+  float: left
+  height: 10%
+  width: 30%
+  //background-color: black
+  //position: initial
+  //z-index: 1
+
+#box
+  padding: 0
+  margin: auto
+  width: 100%
+  min-width: 100%
+  height: 480px
+
+#left
+  width: 60px
+  float: left
+  background-color: sidebarColor
+  height: 100%
+
+#right
+  width: 60px
+  float: left
+  height: 100%
+  background-color: sidebarColor
+
+#world
+  width: 100%
+  background-color: black
+  height: 100%
+  border: solid
+  border-width: 1px
+  border-color: borderColor
+  postion: absolute
+  z-index: 0
+
+#console
+  margin: auto
+  width: 100%
+  min-width: 100%
+  background-color: barColor
+  height: 20%
+  border-top: solid
+  border-bottom: solid
+  border-left: solid
+  border-right: solid
+  border-width: 1px
+  border-color: borderColor
+
+#field
+  border: dotted
+  border-width: 1px
+  border-color: borderColor
+  padding: 3px
+  margin: 0
+  width: 89%
+  background: #202020
+  color: white
+  margin-left: 1px
+
+#send
+  width: 8%
+  background: #444444
+  border: none
+  margin: 0
+  padding: 4px
+  margin-left: -8px
+
+#messages
+  list-style-type: none
+  margin: 0
+  padding: 0
+  height: 125px
+  overflow-y: scroll
+  & li
+    padding: 0 2px
+    &:nth-child(even)
+      background: #101010
