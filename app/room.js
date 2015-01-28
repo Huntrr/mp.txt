@@ -50,11 +50,10 @@ RoomInstance.prototype.loadRoom = function(id) {
     $this.room = room;
     $this.socket.leave($this.roomId);
     $this.roomId = room.id;
-    $this.user.entity.room = room.id;
     $this.socket.join($this.roomId);
     
     //saves user in new room
-    $this.user.entity.save(function(err) {
+    Entity.update({_id: $this.user.entity}, {room: room.id}, function(err) {
       if(err) return console.log(err.message); 
       $this.sendToUser();
     });

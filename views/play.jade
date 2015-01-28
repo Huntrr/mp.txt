@@ -3,52 +3,32 @@ extends layouts/main
 block header
   script(src='/socket.io/socket.io.js')
   
+  script(src='/js/gameformat.js')
   script(src='/js/console.js')
   script(src='/js/world.js')
   script(src='/js/gameclient.js')
 
 block content
-  #char-span
-    | x
+  #char-span x
   #content
-    #world
-      //stuff in the world
-    #console
-      ul#messages
-      form(action='')#consoleform
-        input#field(autocomplete='off')
-        input#send(type='submit' value='Send')
+    #left
+      #world
+        //stuff in the world
+      #console
+        ul#messages
+        form(action='')#consoleform
+          input#field(autocomplete='off')
+          input#send(type='submit' value='Send')
     #sidebar
-      #stats
-        | [<span style='color: red'>=========</span><span style='color: black'>--------</span>] (60/100)
-        | <br>
-        | [<span style='color: blue'>=================</span>] (100/100)
-      #info
-        | Location: Somewhere
-      #version
-        h1 #{appname}
-        h2 v#{version} - #{versionName}
-    
-//  #box
-//    #world
-//      | text for days text for days text for days text for days text for days text for days text for days 
-//      | text for days text for days text for days text for days text for days text for days text for days 
-//      | text for days text for days text for days text for days text for days text for days text for days 
-//      | text for days text for days text for days text for days text for days text for days text for days 
-//      | text for days text for days text for days text for days text for days text for days text for days 
-//      | text for days text for days text for days text for days text for days text for days text for days 
-//      | text for days text for days text for days text for days text for days text for days text for days 
-//  #console
-//    #leftStatus
-//      | [<span style='color: red'>=========</span><span style='color: black'>--------</span>] (60/100)
-//      | <br>
-//      | [<span style='color: blue'>=================</span>] (100/100)
-//    ul#messages
-//    form(action='')#consoleform
-//      input#field(autocomplete='off')
-//      input(type='submit' value='Send')#send
-//    #rightStatus
-//      p Location: Somewhere
-//  #middleStatus
-//    h1 #{appname}
-//    h2 v#{version} - #{versionName}
+      #top
+        #stats
+          | [<span style='color: red'>=========</span><span style='color: black'>--------</span>] (60/100)
+          | <br>
+          | [<span style='color: blue'>=================</span>] (100/100)
+        #info
+          | Location: Somewhere
+      #bottom
+        #version
+          h1 #{appname}
+          h2 v#{version} - #{versionName}
+        
