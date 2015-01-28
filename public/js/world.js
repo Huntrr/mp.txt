@@ -28,7 +28,7 @@ var World = function(Socket, Console) {
     windowWidth = $div.innerWidth();
     windowHeight = $div.innerHeight();
     //Height and Width in number of characters
-    width = windowWidth / textWidth + 5;
+    width = windowWidth / textWidth - 3;
     height = windowHeight / textHeight;
   }
   
@@ -47,33 +47,40 @@ var World = function(Socket, Console) {
     }
   }
   
+  var getRenderPos = function(_x, _y) {
+    var halfHeight = Math.floor(height / 2);
+    var halfWidth = Math.floor(width / 2);
+    var x = Math.max(0, _x - halfWidth);
+    var y = Math.max(0, _y - halfHeight);
+    if(x + width >= map.tiles[0].length) {
+      x = Math.floor(map.tiles[0].length - width);
+    }
+    if(y + height >= map.tiles.length) {
+      y = Math.floor(map.tiles.length - height);
+    }
+    
+    return [x, y];
+  }
+  
   var renderFull = function () {
-    var playerPos = [10, 10];
-    var renderPos = [playerPos[1] - (height / 2), playerPos[0] - (width / 2)];
+    var playerPos = [100, 1000];
     
-    if (renderPos[0] < 0) {
-      renderPos[0] = 0;
-    };
-    if (renderPos[1] < 0) {
-      renderPos[1] = 0;
-    };
-    if (renderPos[0] > width) {
-      renderPos[0] = width;
-    };
-    if (renderPos[1] > height) {
-      renderPos[1] = height;
-    };
+    var renderPos = getRenderPos(playerPos[0], playerPos[1]);
     
-//    loop through the "below" array
-    for (var y = renderPos[1]; y < renderPos[1] + height; y++) {
-      for (var x = renderPos[0]; x < renderPos[0] + width; x++) {
-        var posx = x - renderPos[0]
-        var posy = y - renderPos[1]
+    //loop through the "below" array
+    var tile;
+    for (var y = 0; y < (height); y++) {
+      for (var x = 0; x < (width); x++) {
+        var posX = x + renderPos[0];
+        var posY = y + renderPos[1];
         //get span
-        var $span = $(doc.getElementById(posx + "," + posy));
+        var $span = $(doc.getElementById(x + "," + y));
         //set attribute of span
-        $span.css("color", map.tiles[y][x].color)
-        $span.text(map.tiles[y][x].tile);
+        if(posY < map.tiles.length && posX < map.tiles[posY].length) {
+          tile = map.tiles[posY][posX];
+          $span.css("color", tile.color);
+          $span.text(tile.tile);
+        }
       }
     }
     //Entity code commented out because it's not functional yet
@@ -93,6 +100,11 @@ var World = function(Socket, Console) {
       }
     } */
   }
+  
+  /*$(window).resize(function() {
+    setupDOM();
+    renderFull();
+  });*/
   
   //SETUP LISTENERS
   socket.on('world.load', function (data) {
