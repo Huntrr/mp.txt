@@ -2,14 +2,20 @@
 borderColor = #808080
 sidebarColor = #101010
 barColor = #080808
+consoleColor = #202020
 textSize = 26px
 
 //style
+
+*
+  padding: 0
+  margin: 0
 
 body
   background-color: #202020
   font-family: menlo, monospace
   color: white
+  margin: 20px
 
 h1
   font-size: 20px
@@ -20,46 +26,54 @@ h2
 h3
   font-size: 26px
 
-#content
-  padding: 60px
+//#content
+
+#left
+  float: left
+  width: 75%
+  width: calc(100% - 321px)
 
 #char-span
   display: block
-  float: left
+  position: absolute
+  top: -100px
+  left: -100px
   font-size: textSize
+  line-height: 1em
 
 /*
  * EVERYTHING WORLD RELATED
  */
 #world
-  position: absolute
-  top: 0
-  right: 20% 
-  bottom: 20% 
-  left: 0
   background: sidebarColor
-  border-bottom: solid
+  border: solid
   border-width: 1px
   border-color: borderColor
   font-size: textSize
+  line-height: 1em
+  height: 700px
+  overflow: hidden
+  
 
 /*
  * EVERYTHING CONSOLE RELATED
  */
 #console
-  background-color: #202020
-  position: absolute
-  top: 80%
-  right: 20% 
-  bottom: 0 
-  left: 0
+  background-color: consoleColor
+  height: 175px
+  max-height: 25%
+  width: 100%
+  padding: 0
+  margin: 0
+  border-right: solid
+  border-bottom: solid
+  border-left: solid
+  border-width: 1px
+  border-color: borderColor
 
 #messages
-  position: absolute
-  top: 0
-  left: 0
-  right: 0
-  padding-left: 20px
+  height: 85%
+  height: calc(100% - 24px)
   list-style-type: none
   overflow-y: scroll
   & li
@@ -67,63 +81,43 @@ h3
     &:nth-child(even)
       background: #101010
 
-/**
- *no formatting on consoleform right now, 
- *but in the furture it might be needed
- */
-//#consoleform
-
 #field
   border: dotted
   border-width: 1px
   border-color: borderColor
   padding: 3px
   margin: 0
-  width: 89%
+  width: 90%
+  width: calc(100% - 93px)
+  height: 15px
   background: #202020
   color: white
   margin-left: 1px
-  position: absolute
-  bottom: 0
 
 #send
-  width: 8%
+  width: 75px
   background: #444444
   border: none
   margin: 0
   padding: 4px
-  margin-left: -8px
-  position: absolute
-  right: 0
-  bottom: 0
 
 /*
  * EVERYTHING SIDEBAR RELATED
  */
-
 #sidebar
-  position: absolute
-  top: 0
-  right: 0 
-  bottom: 0 
-  left: 80%
+  float: left
+  width: 20%
+  width: calc(300px)
+  max-width: 35%
   background: sidebarColor
   background-color: #202020
-  border-left: solid
+  border-right: solid
+  border-bottom: solid
+  border-top: solid
   border-width: 1px
   border-color: borderColor
-
-#stats
-  position: relative
-  padding-left: 10px
-
-#info
-  position: relative
-  padding-left: 10px
+  text-align: center
+  padding: 10px
 
 #version
-  position: absolute
-  right: 0 
-  bottom: 0 
-  left: 0
   text-align: center

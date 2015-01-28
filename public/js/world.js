@@ -3,6 +3,7 @@ var World = function(Socket, Console) {
   
   var socket = Socket;
   var console = Console;
+  var map;
 
   //helper methods
   
@@ -24,15 +25,15 @@ var World = function(Socket, Console) {
     textWidth = $textSpan.width();
     textHeight = $textSpan.height();
     //div height and width
-    windowWidth = $div.width();
-    windowHeight = $div.height();
+    windowWidth = $div.innerWidth();
+    windowHeight = $div.innerHeight();
     //Height and Width in number of characters
     width = windowWidth / textWidth + 5;
-    height = windowHeight / textHeight + 5;
+    height = windowHeight / textHeight;
   }
   
   //Rendering functions
-  var setupDOM = function (map) {
+  var setupDOM = function () {
     redefine();
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {
@@ -46,7 +47,7 @@ var World = function(Socket, Console) {
     }
   }
   
-  var renderFull = function (map) {
+  var renderFull = function () {
     var playerPos = [10, 10];
     var renderPos = [playerPos[1] - (height / 2), playerPos[0] - (width / 2)];
     
@@ -95,12 +96,9 @@ var World = function(Socket, Console) {
   
   //SETUP LISTENERS
   socket.on('world.load', function (data) {
-//    $('#world').html(data.json);
-//    alert("starting")
-    setupDOM(JSON.parse(data.json));
-//    alert("done placing spans")
-    renderFull(JSON.parse(data.json));
-//    alert("done rendering");
+    map = JSON.parse(data.json);
+    setupDOM();
+    renderFull();
     socket.emit('world.load', { type: 'ack' });
   });
   
