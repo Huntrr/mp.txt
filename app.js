@@ -222,7 +222,11 @@ if(cluster.isMaster) {
   var io = socketio(server);
   
   //tell Socket.IO to use the redis adapter.
-  io.adapter(sio_redis({ host: 'localhost', port: 6379 }));
+  if(process.env.REDISCLOUD_URL) {
+    io.adapter(sio_redis(process.env.REDISCLOUD_URL));
+  } else {
+    io.adapter(sio_redis({ host: 'localhost', port: 6379 }));
+  }
   
   //=========================
   //SOCKET.IO MIDDLEWARE HERE
