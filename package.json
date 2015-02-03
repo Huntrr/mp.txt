@@ -32,6 +32,7 @@
     "jsonwebtoken": "3.2.2",
     "socketio-jwt": "2.3.5",
     "validator": "3.27.0",
-    "bcrypt-nodejs": "0.0.3"
+    "bcrypt-nodejs": "0.0.3",
+    "redis": "0.12.1"
   }
 }

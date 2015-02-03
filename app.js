@@ -227,10 +227,15 @@ if(cluster.isMaster) {
   
   //tell Socket.IO to use the redis adapter.
   if(process.env.REDISCLOUD_URL) {
-    io.adapter(sio_redis(process.env.REDISCLOUD_URL));
+    var redisServer = require('url').parse(process.env.REDISCLOUD_URL);
+    var redis = require('redis');
+    var pub = redis.createClient(redisServer.port, redisServer.hostname, {auth_pass: redisServer.auth.split(":")[1]});
+    var sub = redis.createClient(redisServer.port, redisServer.hostname, {detect_buffers: true, auth_pass: redisServer.auth.split(":")[1]});
+    io.adapter(sio_redis({pubClient: pub, subClient: sub}));
   } else {
     io.adapter(sio_redis({ host: 'localhost', port: 6379 }));
   }
+  
   
   //=========================
   //SOCKET.IO MIDDLEWARE HERE
