@@ -5,7 +5,7 @@ var world = false;
 
 //connection logic
 function connect() {
-  var url = "http://localhost:3000";
+  var url = location.origin;
   if(gameSocket) {
     gameSocket.removeAllListeners();
   }
