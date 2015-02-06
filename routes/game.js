@@ -28,4 +28,8 @@ module.exports = function(app, jwt, jwt_secret) {
     });
     
   });
+  
+  app.get('/about', function(req, res) {
+    res.render('about', {title: 'mp.txt'});
+  });
 }
