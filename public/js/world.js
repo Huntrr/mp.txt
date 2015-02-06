@@ -19,7 +19,9 @@ var World = function(Socket, Console) {
   var windowHeight = $div.height();
   //Height and Width in number of characters
   var width = windowWidth / textWidth;
+  width -= 1;
   var height = windowHeight / textHeight;
+//  height -= 1;
   
   var redefine = function() {
     textWidth = $textSpan.width();
@@ -29,7 +31,9 @@ var World = function(Socket, Console) {
     windowHeight = $div.innerHeight();
     //Height and Width in number of characters
     width = windowWidth / textWidth;
+    width -= 1;
     height = windowHeight / textHeight;
+//    height -= 1;
   }
   
   //Rendering functions
