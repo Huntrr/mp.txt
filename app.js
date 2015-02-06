@@ -9,11 +9,15 @@ var cluster = require('cluster'),
     mongoose = require('mongoose'), //for mongodb
     net = require('net'); //needs for main master server, which delegates to workers
 
-//config grabbers
-  var configDB = require('./config/database.js');
+  var dburl; //database url
 
-//main MongoDB configuration
-  mongoose.connect(configDB.url);
+  //main MongoDB configuration
+  if(process.env.DATABASE_URL) {
+    var dburl = process.env.DATABASE_URL;
+  } else {
+    dburl = require('./config/database.js').url;
+  }
+  mongoose.connect(dburl);
   var db = mongoose.connection;
   db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -146,7 +150,7 @@ if(cluster.isMaster) {
   
   var jwt = require('jsonwebtoken');
   var socketio_jwt = require('socketio-jwt');
-  var jwt_secret = require('./config/jwt-secret').secret; //The super secret string that must not be shared with anyone
+  var jwt_secret = process.env.SECRET_KEY || require('./config/jwt-secret').secret; //The super secret string that must not be shared with anyone
   
   //setup the app
   var app = new express();
@@ -222,7 +226,16 @@ if(cluster.isMaster) {
   var io = socketio(server);
   
   //tell Socket.IO to use the redis adapter.
-  io.adapter(sio_redis({ host: 'localhost', port: 6379 }));
+  if(process.env.REDISCLOUD_URL) {
+    var redisServer = require('url').parse(process.env.REDISCLOUD_URL);
+    var redis = require('redis');
+    var pub = redis.createClient(redisServer.port, redisServer.hostname, {auth_pass: redisServer.auth.split(":")[1]});
+    var sub = redis.createClient(redisServer.port, redisServer.hostname, {detect_buffers: true, auth_pass: redisServer.auth.split(":")[1]});
+    io.adapter(sio_redis({pubClient: pub, subClient: sub}));
+  } else {
+    io.adapter(sio_redis({ host: 'localhost', port: 6379 }));
+  }
+  
   
   //=========================
   //SOCKET.IO MIDDLEWARE HERE
