@@ -30,7 +30,7 @@ var World = function(Socket, Console) {
     windowWidth = $div.innerWidth();
     windowHeight = $div.innerHeight();
     //Height and Width in number of characters
-    width = windowWidth / textWidth;
+    width = windowWidth / textWidth - 1;
     width -= 1;
     height = windowHeight / textHeight;
 //    height -= 1;
