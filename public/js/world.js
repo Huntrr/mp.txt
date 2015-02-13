@@ -116,6 +116,9 @@ var World = function(Socket, Console) {
     setupDOM();
     renderFull();
     socket.emit('world.load', { type: 'ack' });
+    
+    var playerEntity = map.entities[data.player_entity._id];
+    console.post(playerEntity._id);
   });
   
   //everything all set up right

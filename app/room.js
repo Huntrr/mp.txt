@@ -34,11 +34,13 @@ RoomInstance.prototype.sendToUser = function() {
   //sends the whole room to the user, for a complete load
   var $this = this;
   
-  this.room.getJSON(function(err, json) {
-    if(err) return console.log(err.message);
-    
-    $this.socket.emit('world.load', {json: json});
+  getUser($this.socket.decoded_token, function(err, user) {
+    $this.room.getJSON(function(err, json) {
+      if(err) return console.log(err.message);
+      $this.socket.emit('world.load', {json: json, player_entity: user.entity});
+    });
   });
+  
 }
 
 RoomInstance.prototype.loadRoom = function(id) {
