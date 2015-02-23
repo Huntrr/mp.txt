@@ -23,6 +23,9 @@ var options = {
   genAbove: function(generator) {
     var map = [];
     return map;
+  },
+  spawn: function(generator) {
+    return [Math.floor(generator.WIDTH / 2), Math.floor(generator.HEIGHT / 2)];
   }
 };
 

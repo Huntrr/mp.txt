@@ -10,7 +10,9 @@ var roomSchema = new Schema({
   inside: { description: String, 
             tiles: Schema.Types.Mixed,
             roof: Schema.Types.Mixed,
-            objects: [{ type: Schema.Types.ObjectId, ref: 'Object' }]
+            objects: [{ type: Schema.Types.ObjectId, ref: 'Object' }],
+            spawnX: {type: Number, default: 0},
+            spawnY: {type: Number, default: 0}
           },
   tag: String
 });
@@ -39,6 +41,8 @@ roomSchema.methods.generateRoom = function (Generator, cb) {
   this.inside.description = map.desc;
   this.inside.tiles = map.tiles;
   this.inside.roof = map.roof;
+  this.inside.spawnX = map.spawnX;
+  this.inside.spawnY = map.spawnY;
   
   var $this = this;
   var i;

@@ -17,7 +17,7 @@ function RoomInstance(socket, io) {
     if(user.entity) {
       if(user.entity.room) {
         //user has a room we can join
-        $this.loadRoom(user.entity.room);
+        $this.loadRoom(user.entity.room, 'none');
       } else {
         $this.loadDefaultRoom();
       }
@@ -43,7 +43,7 @@ RoomInstance.prototype.sendToUser = function() {
   
 }
 
-RoomInstance.prototype.loadRoom = function(id) {
+RoomInstance.prototype.loadRoom = function(id, loadType) {
   //loads room and then sets user into that room
   var $this = this;
   Room.findById(id, function(err, room) {
@@ -55,10 +55,26 @@ RoomInstance.prototype.loadRoom = function(id) {
     $this.socket.join($this.roomId);
     
     //saves user in new room
-    Entity.update({_id: $this.user.entity}, {room: room.id}, function(err) {
-      if(err) return console.log(err.message); 
-      $this.sendToUser();
-    });
+    var x = 0;
+    var y = 0;
+    //figure out x and y of player
+    if(loadType === 'spawn') {
+      x = room.inside.spawnX;
+      y = room.inside.spawnY;
+    }
+    
+    if(loadType === 'none') { //not updating the coords
+      Entity.update({_id: $this.user.entity}, {room: room.id}, function(err) {
+        if(err) return console.log(err.message); 
+        $this.sendToUser();
+      });
+    } else {
+      //we ARE updating the coords
+      Entity.update({_id: $this.user.entity}, {room: room.id, x: x, y: y}, function(err) {
+        if(err) return console.log(err.message); 
+        $this.sendToUser();
+      });
+    }
     
     
   });
@@ -68,7 +84,7 @@ RoomInstance.prototype.loadDefaultRoom = function() {
   var $this = this;
   Room.findOne({ tag: 'default' }, function(err, room) {
     if(err) return console.log(err.message);
-    $this.loadRoom(room._id);
+    $this.loadRoom(room._id, 'spawn');
   });
 }
 

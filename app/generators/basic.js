@@ -43,6 +43,9 @@ BasicGenerator.prototype.generate = function() {
   obj.objects = [];
   obj.tiles = this.options.genBelow(this);
   obj.roof = this.options.genAbove(this);
+  var spawn = this.options.spawn(this);
+  obj.spawnX = spawn[0];
+  obj.spawnY = spawn[1];
   
   return obj;
 }

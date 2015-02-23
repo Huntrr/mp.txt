@@ -4,8 +4,12 @@ var World = function(Socket, Console) {
   var socket = Socket;
   var console = Console;
   var map;
+  var playerEntity;
 
   //helper methods
+  var updatePlayer = function() {
+    playerEntity = map.entities[playerEntity._id];
+  }
   
   //Define some variables that render functions will share
   var doc = document
@@ -67,7 +71,8 @@ var World = function(Socket, Console) {
   }
   
   var renderFull = function () {
-    var playerPos = [100, 1000];
+    updatePlayer();
+    var playerPos = [playerEntity.x, playerEntity.y];
     
     var renderPos = getRenderPos(playerPos[0], playerPos[1]);
     
@@ -113,12 +118,14 @@ var World = function(Socket, Console) {
   //SETUP LISTENERS
   socket.on('world.load', function (data) {
     map = JSON.parse(data.json);
+    
+    playerEntity = map.entities[data.player_entity._id];
+    console.post(playerEntity.body); //2d array
+    console.post('(' + playerEntity.x + ', ' + playerEntity.y + ')');
+    
     setupDOM();
     renderFull();
     socket.emit('world.load', { type: 'ack' });
-    
-    var playerEntity = map.entities[data.player_entity._id];
-    console.post(playerEntity._id);
   });
   
   //everything all set up right

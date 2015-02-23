@@ -7,7 +7,7 @@ var entitySchema = new Schema({
   x: { type: Number, default: -1 },
   y: { type: Number, default: -1 },
   body: Schema.Types.Mixed,
-  character: String,
+  character: { type: String, default:'o' },
   color: String,
   behavior: String,
   description: String,

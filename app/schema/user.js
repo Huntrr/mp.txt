@@ -51,6 +51,11 @@ userSchema.methods.createEntity = function(character, color, cb) {
   entity.behavior = "player";
   entity.belongsTo = this._id;
   
+  entity.body = [[' ', character, ' '],
+                ['-', '+', '-'],
+                [' ', '|', ' '],
+                [' ', '^', ' ']];
+  
   entity.save(function(err, entity) {
     if(err) return console.log(err);
     
